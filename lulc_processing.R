@@ -1,5 +1,4 @@
 install.packages("raster")
-install.packages("rgdal")
 install.packages("FedData")
 install.packages("ggplot2")
 
@@ -7,26 +6,30 @@ install.packages("ggplot2")
 library(raster)
 library(sp)
 library(sf)
-library(rgdal)
 library(FedData)
 library(ggplot2)
 
 ## set working directory to data folder
-setwd("C:/Users/zarzarc/OneDrive/Desktop/Research/WFU/surface-atmosphere/urban-precip/")
+setwd("C:/Users/zarzarc/OneDrive/Desktop/Research/WFU/surface-atmosphere/urban-precip/data/")
 
 ## load in the state shapefile
-nc.counties <- st_read("data/gis/CountyBoundary/BoundaryCountyPolygon.shp")
+nc.counties <- st_read("gis/CountyBoundary/BoundaryCountyPolygon.shp")
 
 ## load in the urban boundaries shapefile
-nc.urban <- st_read("data/gis/Smooth_Urban_Boundary/SmoothedUrbanBoundary.shp")
+nc.urban <- st_read("gis/Smooth_Urban_Boundary/SmoothedUrbanBoundary.shp")
 
 ## plot the state shapefile
 ggplot() +
   geom_sf(data = nc.counties, size = 1.5, color = "black", fill = "NA") +
-  geom_sf(data = nc.urban, size = 0.5, color = "gray", fill = "brown") +
+  geom_sf(data = nc.urban, aes(fill=TYPE)) +
+  scale_color_manual(name = "Legend", values = nc.urban$TYPE) + ##CANNOT GET THE LEGEND TITLE TO WORK
   ggtitle("NC Counties and Urban Areas") +
   coord_sf()
 
+
+## download NLCD data
+get_nlcd(template=nc.counties, label = "nc_nlcd", year = 2011, 
+         dataset = "landcover")
 
 
 # load raster in R object called 'DEM"
