@@ -1,6 +1,6 @@
 ## load the raster, sp, and rgdal packages
 library(raster)
-library(gdal)
+library(rgdal)
 library(sf)
 library(ggplot2)
 

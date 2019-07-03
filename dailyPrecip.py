@@ -58,7 +58,7 @@ precipAcc[findnan] = float(9999)
 
 #Write the out file
 driver = gdal.GetDriverByName("GTiff")
-dsOut = driver.Create("ST4.20190405.tiff", ds.RasterXSize, ds.RasterYSize, 1, precipBand.DataType)
+dsOut = driver.Create("ST4.20190405.day.tiff", ds.RasterXSize, ds.RasterYSize, 1, precipBand.DataType)
 CopyDatasetInfo(ds,dsOut)
 bandOut=dsOut.GetRasterBand(1)
 BandWriteArray(bandOut, precipAcc)
