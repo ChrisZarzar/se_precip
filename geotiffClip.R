@@ -21,16 +21,16 @@ library(sf)
 
 
 ## set up the working directory
-setwd("C:/Users/chris/OneDrive/Desktop/Research/WFU/surface-atmosphere/urban-precip/data/")
+setwd("C:/Users/chris/OneDrive/Desktop/Research/WFU/surface-atmosphere/se-precip/data/sample_mpe/20190405")
 
 ## load in the raster
-raw.prcp <- raster("sample_mpe/20190405/ST4.20190405.tiff")
+raw.prcp <- raster("ST4.20190405.tiff")
 
 ## assign missing data value
 NAvalue(raw.prcp) <- 9999
 
 ## load in the clipping shapefile
-nc.buffer <- readOGR("gis/nc-state-boundary/NC_Shapefile_hrap_PCS_Buffered.shp")
+nc.buffer <- readOGR("C:/Users/chris/OneDrive/Desktop/Research/WFU/surface-atmosphere/se-precip/data/gis/nc-state-boundary/NC_Shapefile_hrap_PCS_Buffered.shp")
 
 ## assign the clip extent
 clip.extent <- nc.buffer
@@ -72,7 +72,7 @@ plot(final.ras, main = "Cropped MPE Precip")
 plot(clip.extent, add=TRUE)
 
 ## write out the final edited raster
-writeRaster(final.ras, filename = "sample_mpe/20190405/NC_ST4.20190405.tiff", overwrite = TRUE)
+writeRaster(final.ras, filename = "NC_ST4.20190405.tiff", overwrite = TRUE)
 
 
 

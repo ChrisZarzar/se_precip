@@ -39,7 +39,7 @@ ______________________________________________________________________________
 import os
 import pandas as pd
 
-dataDir = "C:/Users/chris/OneDrive/Desktop/Research/WFU/surface-atmosphere/urban-precip/data/sample_mpe/"
+dataDir = "C:/Users/zarzarc/OneDrive/Desktop/Research/WFU/surface-atmosphere/se-precip/data/sample_mpe/"
 os.chdir(dataDir)
 inFile = "US_prcp_063018.dat"
 # if data is not formatted as csv, run this code block

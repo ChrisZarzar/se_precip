@@ -14,12 +14,9 @@ ________________________________________________________
 Author: Chris Zarzar
 Created: 1 July 2019
 Contact: chriszarzar@gmail.com
-
 ----History----
-
 CREATED: Chris Zarzar 1-jul-2019
 _______________________________________________________
-
 """
 
 #Import external libraries
@@ -31,7 +28,7 @@ import numpy
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
-wrkdir = "C:/Users/chris/OneDrive/Desktop/Research/WFU/surface-atmosphere/urban-precip/data/sample_mpe/20190405/"
+wrkdir = "C:/Users/zarzarc/OneDrive/Desktop/Research/WFU/surface-atmosphere/se-precip/data/sample_mpe/20190405/"
 os.chdir(wrkdir)
 #os.getcwd()
 

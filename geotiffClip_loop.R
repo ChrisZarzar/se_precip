@@ -20,18 +20,19 @@ library(sf)
 
 
 ## set up the working directory
-setwd("C:/Users/chris/OneDrive/Desktop/Research/WFU/surface-atmosphere/urban-precip/data/")
+setwd("C:/Users/zarzarc/OneDrive/Desktop/Research/WFU/surface-atmosphere/se-precip/data/sample_mpe/20190405")
 
 ## set up other required mpe data and GIS directories
-mainDir <- "C:/Users/chris/OneDrive/Desktop/Research/WFU/surface-atmosphere/urban-precip/data/"
+mainDir <- "C:/Users/zarzarc/OneDrive/Desktop/Research/WFU/surface-atmosphere/se-precip/data/"
 
 mpeDir <- (paste(mainDir,"sample_mpe/20190405/",sep=''))
 
-gisDir <- "gis/nc-state-boundary/"
+gisDir <- (paste(mainDir,"gis/nc-state-boundary/",sep='')) 
 
 
-## load in the clipping shapefile
-nc.buffer <- readOGR("NC_Shapefile_hrap_PCS_Buffered.shp")
+## load in the clipping vector
+sf.clip <- paste(gisDir,"NC_Shapefile_hrap_PCS_Buffered.shp",sep='')
+nc.buffer <- readOGR(sf.clip)
 
 ## assign the clip extent
 clip.extent <- nc.buffer
@@ -56,6 +57,9 @@ for (currentFile in fileList){
   
   ## mask the cropped raster to limit the values used in analysis to those within the buffer.
   final.ras <- mask(crop.ras, clip.extent)
+  
+  ## reassign the missing values to 9999 avoid numpy Runtime warnings
+  final.ras[is.na(final.ras)] <- 9999
   
   ## write out the final edited raster
   writeRaster(final.ras, filename = fileOut, overwrite = TRUE)

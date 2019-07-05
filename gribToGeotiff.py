@@ -26,7 +26,7 @@ _______________________________________________________
 from osgeo import gdal
 import os
 
-wrkdir = "C:/Users/chris/OneDrive/Desktop/Research/WFU/surface-atmosphere/urban-precip/data/sample_mpe/20190405/"
+wrkdir = "C:/Users/zarzarc/OneDrive/Desktop/Research/WFU/surface-atmosphere/se-precip/data/sample_mpe/20190405/"
 os.chdir(wrkdir)
 #os.getcwd()
 

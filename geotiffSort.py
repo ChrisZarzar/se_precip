@@ -85,8 +85,8 @@ for ssc in sscList:
 diurnalPath=wrkdir+'diurnal_anl/'
 for dirName, subdirList, fileList in os.walk(wrkdir):
     for filename in fileList:
-        if filename.endswith('.tif'):       
-            if "NC" and ".01h" in filename: #Limit the analysis to North Carolina hourly files
+        if filename.endswith('.tif') or filename.endswith('.tiff'):       
+            if "NC" in filename and ".01h" in filename: #Limit the analysis to North Carolina hourly files
                 fname = filename
                 fpath = (dirName+'/'+fname) #Get file path for copying the file later
                 fnameBase = os.path.splitext(filename)[0] #Remove the extension for more easier datetime extraction
@@ -96,9 +96,8 @@ for dirName, subdirList, fileList in os.walk(wrkdir):
                 for hour in hourList: #Compare the file with the list of possible hourly output
                     hourStr = datetime.datetime.strptime(hour, '%H').strftime('%H') #Format the hour appropriately for moving the file to the correct directory
                     try:       #This simply avoids breaking of the script once it gets back seeing the same file using the os.walk method since I do not allow overwriting             
-                        if date.hour==int(hour): #Using date.hour will give give 0 instead of 00, so it is fine to use int(hour) to reduce complexity of the script
+                        if int(date.hour)==int(hour): #Using date.hour will give give 0 instead of 00, so it is fine to use int(hour) to reduce complexity of the script
                             shutil.copy2(fpath, diurnalPath+hourStr) #Copy the file to the appropriate directory
-                            print (fname + ' copied to ' + diurnalPath+hourStr)
                     except:
                         pass
                         
@@ -109,8 +108,8 @@ for dirName, subdirList, fileList in os.walk(wrkdir):
 annualPath=wrkdir+'annual_anl/'
 for dirName, subdirList, fileList in os.walk(wrkdir):
     for filename in fileList:
-        if filename.endswith('.tif'):       
-            if "NC" and ".01h" in filename: #Limit the analysis to North Carolina hourly files
+        if filename.endswith('.tif') or filename.endswith('.tiff'):      
+            if "NC" in filename: #For both hourly and daily data
                 fname = filename
                 fpath = (dirName+'/'+fname) #Get file path for copying the file later
                 fnameBase = os.path.splitext(filename)[0] #Remove the extension for more easier datetime extraction
@@ -121,9 +120,8 @@ for dirName, subdirList, fileList in os.walk(wrkdir):
                     yearStr = str(yearInt) #Needs to be in string format for both datetime command below and for setting up the directory
                     year = datetime.datetime.strptime(yearStr, '%Y').year #Format the year appropriately for moving the file to the correct directory
                     try:
-                        if date.year==yearInt: #Compare file date with the year loop
+                        if int(date.year)==yearInt: #Compare file date with the year loop
                             shutil.copy2(fpath, annualPath+yearStr) #Copy the file to the appropriate directory
-                            print (fname + ' copied to ' + annualPath+yearStr)
                     except:
                         pass
              
@@ -134,74 +132,146 @@ for dirName, subdirList, fileList in os.walk(wrkdir):
 simpseasonalPath=wrkdir+'simpseasonal_anl/'                    
 for dirName, subdirList, fileList in os.walk(wrkdir):
     for filename in fileList:
-        if filename.endswith('.tif'):       
-            if "NC" and ".01h" in filename: #Limit the analysis to North Carolina hourly files
+        if filename.endswith('.tif') or filename.endswith('.tiff'):       
+            if "NC" in filename: #For both hourly and daily data
                 fname = filename
                 fpath = (dirName+'/'+fname) #Get file path for copying the file later
                 fnameBase = os.path.splitext(filename)[0] #Remove the extension for more easier datetime extraction
                 dateName = fnameBase[7:-4] #Extract the date portion of the file name string
                 DB_TIME_FORMAT = '%Y%m%d%H' #Set up the formatting of the string date in the file name
                 date = datetime.datetime.strptime(dateName, DB_TIME_FORMAT) #interpret the date time from the string
-                if 1==date.month or 2==date.month or 12==date.month:
-                    print (fname)
-                    #copy to winter folder
-                elif 3==date.month or 4==date.month or 5==date.month:
-                    #copy to spring folder
-                elif 6==date.month or 7==date.month or 8==date.month:
-                    #copy to summer folder
-                elif 9==date.month or 10==date.month or 11==date.month:
-                    #copy to fall folder
+                try:
+                    if 1==int(date.month) or 2==int(date.month) or 12==int(date.month):
+                        shutil.copy2(fpath, simpseasonalPath+'/winter') #Copy the file to the appropriate directory
+                    elif 3==int(date.month) or 4==int(date.month) or 5==int(date.month):
+                        shutil.copy2(fpath, simpseasonalPath+'/spring')
+                    elif 6==int(date.month) or 7==int(date.month) or 8==int(date.month):
+                        shutil.copy2(fpath, simpseasonalPath+'/summer')
+                    elif 9==int(date.month) or 10==int(date.month) or 11==int(date.month):
+                        shutil.copy2(fpath, simpseasonalPath+'/fall')
+                except:
+                    pass
                     
 
 #Sort and copy NC data for true calendar date seasonal analysis
 
 """
-VERNAL EQUINOX.....(SPRING) MAR 20 2019 
-SUMMER SOLSTICE....(SUMMER) JUN 21 2019 
-AUTUMNAL EQUINOX...(FALL) SEP 23 2019 
-WINTER SOLSTICE....(WINTER) DEC 21 2019  
+VERNAL EQUINOX.....(SPRING) MAR 19 or 20        (0320)
+SUMMER SOLSTICE....(SUMMER) JUN 20 or 21 2019   (0621)
+AUTUMNAL EQUINOX...(FALL) SEP 22 or 23 2019     (0922)
+WINTER SOLSTICE....(WINTER) DEC 21 or 22 2019   (1221)
 """
 #Set up a for loop to run through all files in dataset 
 trueseasonalPath=wrkdir+'trueseasonal_anl/'                    
 for dirName, subdirList, fileList in os.walk(wrkdir):
     for filename in fileList:
-        if filename.endswith('.tif'):       
-            if "NC" and ".01h" in filename: #Limit the analysis to North Carolina hourly files
+        if filename.endswith('.tif') or filename.endswith('.tiff'):       
+            if "NC" in filename: #For both hourly and daily data
                 fname = filename
                 fpath = (dirName+'/'+fname) #Get file path for copying the file later
                 fnameBase = os.path.splitext(filename)[0] #Remove the extension for more easier datetime extraction
                 dateName = fnameBase[7:-4] #Extract the date portion of the file name string
                 DB_TIME_FORMAT = '%Y%m%d%H' #Set up the formatting of the string date in the file name
                 date = datetime.datetime.strptime(dateName, DB_TIME_FORMAT) #interpret the date time from the string
-                if 1<= (gpsOut[2]- 84.1) <=16:date.month 
-            #Will need to extract the month and data and use that to sort into the appropriate season directory            
-            
+                dateComp = date.strftime('%m%d') 
+                try:
+                    if 101 <= int(dateComp) < 320:
+                        shutil.copy2(fpath, trueseasonalPath+'/winter') #Copy the file to the appropriate directory
+                    elif 1221 <= int(dateComp) <= 1231:
+                        shutil.copy2(fpath, trueseasonalPath+'/winter')
+                    elif 320 <= int(dateComp) < 621:
+                        shutil.copy2(fpath, trueseasonalPath+'/spring')
+                    elif 621 <= int(dateComp) < 922:
+                        shutil.copy2(fpath, trueseasonalPath+'/summer')
+                    elif 922 <= int(dateComp) < 1221:
+                        shutil.copy2(fpath, trueseasonalPath+'/fall')
+                except:
+                    pass
+                
 #Sort and copy NC data for NLCD analysis
-
-#Set up a for loop to run through all files in dataset                
+#IN PROGRESS
+nlcdPath=wrkdir+'nlcd_anl/'                    
 for dirName, subdirList, fileList in os.walk(wrkdir):
     for filename in fileList:
-        if filename.endswith('.tif'):
-            if "NC" in filename:
-                fname=filename
-                print(fname)    
-                #Will need to extract the year and will sort the data into directories that correspond to the date of the NLCD datasets
-
-            
+        if filename.endswith('.tif') or filename.endswith('.tiff'):       
+            if "NC" in filename: #For both hourly and daily data
+                fname = filename
+                fpath = (dirName+'/'+fname) #Get file path for copying the file later
+                fnameBase = os.path.splitext(filename)[0] #Remove the extension for more easier datetime extraction
+                dateName = fnameBase[7:-4] #Extract the date portion of the file name string
+                DB_TIME_FORMAT = '%Y%m%d%H' #Set up the formatting of the string date in the file name
+                date = datetime.datetime.strptime(dateName, DB_TIME_FORMAT) #interpret the date time from the string
+                try:
+                    if 2001 <= int(date.year) < 2004:
+                        shutil.copy2(fpath, nlcdPath+'/2001') #Copy the file to the appropriate directory
+                    elif 2004 <= int(date.year) < 2006:
+                        shutil.copy2(fpath, nlcdPath+'/2004')
+                    elif 2006 <= int(date.year) < 2008:
+                        shutil.copy2(fpath, nlcdPath+'/2006')
+                    elif 2008 <= int(date.year) < 2011:
+                        shutil.copy2(fpath, nlcdPath+'/2008')
+                    elif 2011 <= int(date.year) < 2013:
+                        shutil.copy2(fpath, nlcdPath+'/2011')
+                    elif 2013 <= int(date.year) < 2016:
+                        shutil.copy2(fpath, nlcdPath+'/2013')                        
+                    elif 2016 <= int(date.year):
+                        shutil.copy2(fpath, nlcdPath+'/2016')                        
+                except:
+                    pass
 
             
                 
 #Sort and copy NC data for SSC analysis
+                
+                #BEST WAY TO RUN THIS WILL BE USING GREP TO SEARCH THE TEXTFILE FOR THE DATE, READ THE SECOND COLUMN, THEN MOVE THE FILE BASED ON THAT VALUE INFORMATION
+                #THAT OR I NEED TO FIND A BETTER WAY TO SEARCH A TEXT FILE WITHOUT HAVING TO REOPEN AND SCAN THE WHOLE THING
+                #ALTHOUGH, THAT IS ALL GREP IS REALLY DOING ANYWAYS....
 
-#Set up a for loop to run through all files in dataset                
+#Set up a for loop to run through all files in dataset 
+sscPath = wrkdir+'ssc_anl/'
+
+#Read in the SSC index file
+inputfile = "C:/Users/zarzarc/OneDrive/Desktop/Research/WFU/surface-atmosphere/se-precip/data/ssc/gso_ssc.txt" 
+infile = open(inputfile, 'r')
+infileList = infile.readlines()
+infile.close()
+
 for dirName, subdirList, fileList in os.walk(wrkdir):
     for filename in fileList:
-        if filename.endswith('.tif'):
-            if "NC" in filename:
-                fname=filename
-                print(fname)   
-                #Script will need to compare fname with the SSC list and then take the classification as the method to sort the file into the appropriate directory
+        if filename.endswith('.tif') or filename.endswith('.tiff'):
+            if "NC" in filename: #For both hourly and daily data
+                fname = filename
+                fpath = (dirName+'/'+fname) #Get file path for copying the file later
+                fnameBase = os.path.splitext(filename)[0] #Remove the extension for more easier datetime extraction
+                dateName = fnameBase[7:-4] #Extract the date portion of the file name string
+                DB_TIME_FORMAT = '%Y%m%d%H' #Set up the formatting of the string date in the file name
+                date = datetime.datetime.strptime(dateName, DB_TIME_FORMAT) #interpret the date time from the string
+                dateComp = date.strftime('%Y%m%d') 
+                try: 
+                    for line in infileList: 
+                        sscDate = datetime.datetime.strptime(line[4:12], '%Y%m%d' ).strftime('%Y%m%d') #interpret the date time from the string
+                        if dateComp == sscDate:
+                            ssc = line[13]
+                            if int(ssc)==1:
+                                shutil.copy2(fpath, sscPath+'/dm')    
+                            elif int(ssc) == 2:
+                                shutil.copy2(fpath, sscPath+'/dp')   
+                            elif int(ssc) == 3:
+                                shutil.copy2(fpath, sscPath+'/dt')             
+                            elif int(ssc) == 4:
+                                shutil.copy2(fpath, sscPath+'/mm') 
+                            elif int(ssc) == 5:
+                                shutil.copy2(fpath, sscPath+'/mp') 
+                            elif int(ssc) == 6:
+                                shutil.copy2(fpath, sscPath+'/mt') 
+                            elif int(ssc) == 7:
+                                shutil.copy2(fpath, sscPath+'/t') 
+                            elif int(ssc) == 8:
+                                shutil.copy2(fpath, sscPath+'/miss')
+                        
+                except:
+                    pass
             
+      
             
-            
-            
+## END ##
